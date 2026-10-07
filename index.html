@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Eatventure Progress Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library Chart.js untuk Grafik -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen p-4 md:p-8 font-sans">
   <div class="max-w-2xl mx-auto space-y-6">
@@ -42,6 +44,26 @@
       <button onclick="tambahProgres()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
         🚀 Kirim Chat Progres
       </button>
+    </div>
+
+    <!-- Target Harian Real-Time Hari Ini -->
+    <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-3">
+      <p class="text-xs font-bold text-emerald-700 tracking-wider uppercase">⚡ TARGET HARIAN HARI INI (22 KOTA/HARI)</p>
+      <div class="flex justify-around items-center">
+        <div>
+          <p id="kotaHariIni" class="text-3xl font-black text-emerald-700">0 / 22</p>
+          <p class="text-xs text-emerald-600 font-medium">Kota Selesai Hari Ini</p>
+        </div>
+        <div class="h-10 w-px bg-emerald-200"></div>
+        <div>
+          <p id="sisaHariIni" class="text-3xl font-black text-emerald-700">22</p>
+          <p class="text-xs text-emerald-600 font-medium">Sisa Target Hari Ini</p>
+        </div>
+      </div>
+      <div class="w-full bg-emerald-200 h-3 rounded-full overflow-hidden">
+        <div id="barHariIni" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p id="statusHariIni" class="text-xs text-emerald-700 font-semibold italic">Semangat! Capai 22 kota hari ini agar hutang tidak bertambah.</p>
     </div>
 
     <!-- Akumulasi Hutang -->
@@ -95,6 +117,14 @@
       </div>
     </div>
 
+    <!-- Grafik Tren Progres -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-sm">
+      <h2 class="font-bold text-slate-800 flex items-center gap-2">📈 GRAFIK TREN KENAIKAN KOTA</h2>
+      <div class="relative w-full h-64">
+        <canvas id="progressChart"></canvas>
+      </div>
+    </div>
+
     <!-- Riwayat Chat -->
     <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
       <div class="flex justify-between items-center border-b pb-3">
@@ -117,6 +147,8 @@
       { id: 7, date: '6/10/2026 16.31', rawDate: '2026-10-06T16:31:00', text: 'saya di kota 1043 dengan kotak 0 dan gem 27600', kota: 1043, gem: 27600, kotak: 0 },
       { id: 8, date: '7/10/2026 18.45', rawDate: '2026-10-07T18:45:00', text: 'kota 1056 dengam gem 30100 dan kotak 237', kota: 1056, gem: 30100, kotak: 237 }
     ];
+
+    let myChartInstance = null;
 
     function simpanStorage() {
       localStorage.setItem('ev_history', JSON.stringify(historyData));
@@ -184,15 +216,94 @@
       const d1 = new Date(d1Str);
       const d2 = new Date(d2Str);
 
-      // Hitung perbedaan tanggal murni tanpa terpengaruh jam
       const t1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
       const t2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
 
       const diffMs = t2.getTime() - t1.getTime();
       const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-      // Ditambah 1 agar tanggal pertama terhitung inklusif (hari ke-1)
       return Math.max(1, diffDays + 1);
+    }
+
+    function updateTargetHariIni(terbaru, sortedHistory) {
+      if (sortedHistory.length === 0) return;
+
+      const now = new Date();
+      const todayYear = now.getFullYear();
+      const todayMonth = now.getMonth();
+      const todayDate = now.getDate();
+
+      // Cari progres terakhir sebelum hari ini sebagai acuan awal hari
+      const riwayatSebelumHariIni = sortedHistory.filter(item => {
+        const d = new Date(item.rawDate);
+        const itemDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const startOfToday = new Date(todayYear, todayMonth, todayDate);
+        return itemDate < startOfToday;
+      });
+
+      let kotaAwalHariIni = sortedHistory[0].kota;
+      if (riwayatSebelumHariIni.length > 0) {
+        kotaAwalHariIni = riwayatSebelumHariIni[riwayatSebelumHariIni.length - 1].kota;
+      }
+
+      const kotaSelesaiHariIni = Math.max(0, terbaru.kota - kotaAwalHariIni);
+      const sisaTarget = Math.max(0, 22 - kotaSelesaiHariIni);
+      const pctHariIni = Math.min(100, Math.round((kotaSelesaiHariIni / 22) * 100));
+
+      document.getElementById('kotaHariIni').innerText = `${kotaSelesaiHariIni} / 22`;
+      document.getElementById('sisaHariIni').innerText = `${sisaTarget}`;
+      document.getElementById('barHariIni').style.width = `${pctHariIni}%`;
+
+      const statusEl = document.getElementById('statusHariIni');
+      if (kotaSelesaiHariIni >= 22) {
+        statusEl.innerText = "🎉 Luar biasa! Target 22 kota hari ini sudah tuntas!";
+      } else {
+        statusEl.innerText = `Kurang ${sisaTarget} kota lagi untuk memenuhi target 22 kota hari ini.`;
+      }
+    }
+
+    function renderGrafik(sortedHistory) {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      const labels = sortedHistory.map(item => item.date);
+      const dataKota = sortedHistory.map(item => item.kota);
+
+      if (myChartInstance) {
+        myChartInstance.destroy();
+      }
+
+      myChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Progres Kota',
+            data: dataKota,
+            borderColor: '#059669',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 5,
+            pointBackgroundColor: '#047857'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              ticks: { font: { size: 10 } }
+            },
+            y: {
+              beginAtZero: false,
+              ticks: { font: { size: 11 } }
+            }
+          }
+        }
+      });
     }
 
     function updateUI() {
@@ -206,12 +317,17 @@
       if (historyData.length === 0) {
         container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat progres.</p>';
         document.getElementById('displayHutang').innerHTML = `0 <span class="text-base font-normal text-rose-500">Kota</span>`;
+        document.getElementById('kotaHariIni').innerText = `0 / 22`;
+        document.getElementById('sisaHariIni').innerText = `22`;
+        document.getElementById('barHariIni').style.width = `0%`;
+        if (myChartInstance) myChartInstance.destroy();
         return;
       }
 
-      const sorted = [...historyData].reverse();
+      const sortedKronologis = [...historyData].sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+      const sortedTampilan = [...historyData].reverse();
 
-      sorted.forEach(item => {
+      sortedTampilan.forEach(item => {
         const div = document.createElement('div');
         div.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1';
         div.innerHTML = `
@@ -225,8 +341,8 @@
         container.appendChild(div);
       });
 
-      const terlama = historyData[0];
-      const terbaru = historyData[historyData.length - 1];
+      const terlama = sortedKronologis[0];
+      const terbaru = sortedKronologis[sortedKronologis.length - 1];
 
       const pctKota = Math.min(100, Math.round((terbaru.kota / targetKota) * 100));
       const pctGems = Math.min(100, Math.round((terbaru.gem / targetGems) * 100));
@@ -241,7 +357,7 @@
       document.getElementById('textKotak').innerText = `${terbaru.kotak}/${targetKotak} (${pctKotak}%)`;
       document.getElementById('barKotak').style.width = `${pctKotak}%`;
 
-      // Perhitungan Hutang Target Kota
+      // Akumulasi Hutang
       const totalHari = hitungSelisihHariInklusif(terlama.rawDate, terbaru.rawDate);
       const totalTargetKota = totalHari * 22;
       const totalProgresKota = terbaru.kota - terlama.kota;
@@ -249,6 +365,10 @@
 
       const hutangBersih = Math.max(0, hutang);
       document.getElementById('displayHutang').innerHTML = `${hutangBersih} <span class="text-base font-normal text-rose-500">Kota</span>`;
+
+      // Update Target Real-time & Grafik
+      updateTargetHariIni(terbaru, sortedKronologis);
+      renderGrafik(sortedKronologis);
     }
 
     updateUI();
