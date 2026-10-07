@@ -6,323 +6,252 @@
   <title>Eatventure Progress Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans p-4 md:p-8">
-  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-6 space-y-6">
+<body class="bg-slate-100 min-h-screen p-4 md:p-8 font-sans">
+  <div class="max-w-2xl mx-auto space-y-6">
     
-    <h1 class="text-2xl font-bold text-center text-slate-900 border-b pb-4">🍳 Eatventure Tracker</h1>
-
-    <!-- SECTION 1: JANGKAR TARGET -->
-    <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
-      <h2 class="text-sm font-bold text-amber-800 uppercase tracking-wide mb-3 flex justify-between items-center">
-        <span>🎯 Jangkar Target Total</span>
-        <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-1 rounded-full">Bisa Diedit ✏️</span>
-      </h2>
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-white p-2 rounded-lg shadow-sm flex flex-col items-center">
-          <label for="inputTargetKota" class="block text-xs text-slate-500 mb-1 cursor-pointer">Target Kota</label>
-          <input type="number" id="inputTargetKota" oninput="simpanTarget()" class="w-full text-center font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded p-1 focus:ring-2 focus:ring-amber-500 outline-none transition">
-        </div>
-        <div class="bg-white p-2 rounded-lg shadow-sm flex flex-col items-center">
-          <label for="inputTargetGems" class="block text-xs text-slate-500 mb-1 cursor-pointer">Target Gems</label>
-          <input type="number" id="inputTargetGems" oninput="simpanTarget()" class="w-full text-center font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded p-1 focus:ring-2 focus:ring-amber-500 outline-none transition">
-        </div>
-        <div class="bg-white p-2 rounded-lg shadow-sm flex flex-col items-center">
-          <label for="inputTargetKotak" class="block text-xs text-slate-500 mb-1 cursor-pointer">Target Kotak</label>
-          <input type="number" id="inputTargetKotak" oninput="simpanTarget()" class="w-full text-center font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded p-1 focus:ring-2 focus:ring-amber-500 outline-none transition">
-        </div>
-      </div>
+    <!-- Header -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+      <h1 class="text-2xl font-bold text-slate-800">🍳 Eatventure Tracker</h1>
     </div>
 
-    <!-- SECTION 2: INPUT CHAT PROGRES -->
-    <div class="space-y-3">
-      <label for="chatInput" class="block text-sm font-semibold text-slate-700">💬 Kirim Chat Progres</label>
-      <input type="text" id="chatInput" onkeydown="handleKeyPress(event)" placeholder="Contoh: kota 1043 dengan gem 4360 dan kotak 451" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm">
-      <button onclick="prosesChat()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition">🚀 Kirim Chat Progres</button>
-      
-      <!-- BOX AKUMULASI CARRY OVER (HUTANG / SURPLUS) -->
-      <div id="carryOverBox" class="mt-4 p-4 border rounded-xl text-center space-y-2 transition-all">
-        <span id="statusTitle" class="text-xs font-semibold uppercase tracking-wider block">Akumulasi Status</span>
-        <div id="carryOverVal" class="text-4xl font-extrabold">0</div>
+    <!-- Jangkar Target Total -->
+    <div class="bg-amber-50/60 p-5 rounded-2xl border border-amber-200/60 space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-amber-900 flex items-center gap-2">🎯 JANGKAR TARGET TOTAL <span class="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-normal">BISA DIEDIT ✏️</span></h2>
+      </div>
+      <div class="grid grid-cols-3 gap-3 text-center">
         <div>
-          <span id="statusBadge" class="inline-block px-3 py-1 rounded-full text-xs font-bold text-white mt-1">Status</span>
+          <label class="text-xs text-slate-500 block mb-1">Target Kota</label>
+          <input type="number" id="targetKota" value="1300" onchange="updateUI()" class="w-full text-center font-bold bg-white border border-slate-200 py-1.5 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
         </div>
-        <p id="statusDesc" class="text-sm font-medium italic pt-1"></p>
-      </div>
-
-      <!-- BOX PENGINGAT HARIAN & ISTIRAHAT -->
-      <div class="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm">
-        <div class="font-bold text-blue-800 mb-1">📢 Rekap & Pengingat</div>
-        <div id="reminderTarget" class="text-blue-700 mb-1"></div>
-        <div id="reminderRest" class="font-bold text-indigo-700"></div>
-      </div>
-    </div>
-
-    <!-- SECTION 3: RINGKASAN PROGRES UTAMA -->
-    <div class="space-y-3 pt-2">
-      <div>
-        <div class="flex justify-between text-xs font-bold mb-1">
-          <span>Progres Target Kota</span>
-          <span id="txtProgresKota">0/1300 (0%)</span>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">Target Gems</label>
+          <input type="number" id="targetGems" value="50000" onchange="updateUI()" class="w-full text-center font-bold bg-white border border-slate-200 py-1.5 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
         </div>
-        <div class="w-full bg-slate-200 rounded-full h-3">
-          <div id="barProgresKota" class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-        </div>
-      </div>
-      <div>
-        <div class="flex justify-between text-xs font-bold mb-1">
-          <span>Progres Target Gems</span>
-          <span id="txtProgresGems">0/50000 (0%)</span>
-        </div>
-        <div class="w-full bg-slate-200 rounded-full h-3">
-          <div id="barProgresGems" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-        </div>
-      </div>
-      <div>
-        <div class="flex justify-between text-xs font-bold mb-1">
-          <span>Progres Target Kotak Kecil</span>
-          <span id="txtProgresKotak">0/4500 (0%)</span>
-        </div>
-        <div class="w-full bg-slate-200 rounded-full h-3">
-          <div id="barProgresKotak" class="bg-amber-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">Target Kotak</label>
+          <input type="number" id="targetKotak" value="4500" onchange="updateUI()" class="w-full text-center font-bold bg-white border border-slate-200 py-1.5 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
         </div>
       </div>
     </div>
 
-    <!-- SECTION 4: RIWAYAT CHAT -->
-    <div class="pt-4 border-t border-slate-200">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-md font-bold text-slate-800">📜 RIWAYAT BALASAN CHAT</h2>
-        <button onclick="hapusRiwayat()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs font-bold rounded-lg transition">Hapus Semua</button>
+    <!-- Input Chat Progres -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-sm">
+      <label class="font-bold text-slate-700 block">💬 Kirim Chat Progres</label>
+      <input type="text" id="chatInput" placeholder="Contoh: kota 1043 dengan gem 4360 dan kotak 451" class="w-full border border-slate-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+      <button onclick="tambahProgres()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+        🚀 Kirim Chat Progres
+      </button>
+    </div>
+
+    <!-- Akumulasi Hutang -->
+    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100 text-center space-y-2">
+      <p class="text-xs font-bold text-rose-500 tracking-wider uppercase">AKUMULASI HUTANG TARGET KOTA</p>
+      <p id="displayHutang" class="text-4xl font-black text-rose-600">0 <span class="text-base font-normal text-rose-500">Kota</span></p>
+      <div>
+        <span id="rankBadge" class="inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">Rank: Pengejar Target 🏃</span>
       </div>
-      <div id="riwayatContainer" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
+      <p id="pesanMotivasi" class="text-xs text-rose-600 italic mt-1">Sedikit lagi mendekati target. Kamu pasti bisa melunasinya!</p>
+    </div>
+
+    <!-- Rekap & Pengingat & Progress Bars -->
+    <div class="bg-blue-50/60 p-5 rounded-2xl border border-blue-100 space-y-4">
+      <div class="space-y-1">
+        <p class="font-bold text-blue-900 flex items-center gap-2">📢 Rekap & Pengingat</p>
+        <p class="text-xs text-blue-800">Target kamu adalah <span class="font-bold">22 kota per hari</span>. ☕ Ingat untuk peregangan mata dan badan berkala saat main!</p>
+      </div>
+
+      <!-- Progress Bars -->
+      <div class="space-y-3 pt-2">
+        <div>
+          <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+            <span>Progres Target Kota</span>
+            <span id="textKota">0/1300 (0%)</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="barKota" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+            <span>Progres Target Gems</span>
+            <span id="textGems">0/50000 (0%)</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="barGems" class="bg-cyan-500 h-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+            <span>Progres Target Kotak Kecil</span>
+            <span id="textKotak">0/4500 (0%)</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="barKotak" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Riwayat Chat -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h2 class="font-bold text-slate-800 flex items-center gap-2">📜 RIWAYAT BALASAN CHAT</h2>
+        <button onclick="hapusSemua()" class="text-xs text-rose-500 hover:bg-rose-50 px-2 py-1 rounded-lg border border-rose-200 font-semibold transition">Hapus Semua</button>
+      </div>
+      <div id="riwayatContainer" class="space-y-3"></div>
     </div>
 
   </div>
 
   <script>
-    // === KONFIGURASI ===
-    const TARGET_HARIAN = 22;
-    const KOTA_AWAL = 1017;
-    const HUTANG_AWAL = 18; 
-
-    // === LOCALSTORAGE TARGET ===
-    let targetData = JSON.parse(localStorage.getItem("eatventure_targets")) || {
-        kota: 1300,
-        gems: 50000,
-        kotak: 4500
-    };
-
-    document.getElementById("inputTargetKota").value = targetData.kota;
-    document.getElementById("inputTargetGems").value = targetData.gems;
-    document.getElementById("inputTargetKotak").value = targetData.kotak;
-
-    function simpanTarget() {
-        targetData.kota = parseInt(document.getElementById("inputTargetKota").value) || 0;
-        targetData.gems = parseInt(document.getElementById("inputTargetGems").value) || 0;
-        targetData.kotak = parseInt(document.getElementById("inputTargetKotak").value) || 0;
-        
-        localStorage.setItem("eatventure_targets", JSON.stringify(targetData));
-        renderUI();
-    }
-
-    // === LOCALSTORAGE RIWAYAT ===
-    // Default data diperbarui dengan histori terakhir hari ini jam 16.31 agar HP tersinkronisasi
-    const defaultData = [
-      { tgl: "6/10/2026 16.31", kota: 1043, gem: 27600, kotak: 0, raw: "saya di kota 1043 dengan kotak 0 dan gem 27600" },
-      { tgl: "6/10/2026 04.40", kota: 1043, gem: 4360, kotak: 451, raw: "kota 1043 dengan gem 4360 dan kotak 451" },
-      { tgl: "6/10/2026 03.37", kota: 1039, gem: 3710, kotak: 387, raw: "kota 1039 dengan gem 3710 dan kotak 387" },
-      { tgl: "6/10/2026 02.55", kota: 1034, gem: 2850, kotak: 303, raw: "aku di kota 1034 dengan gem 2850 dan kotak 303" },
-      { tgl: "5/10/2026 17.06", kota: 1027, gem: 5450, kotak: 168, raw: "kota 1027 dengan gem 5450 dan kotak 168" },
-      { tgl: "5/10/2026 14.54", kota: 1025, gem: 5821, kotak: 132, raw: "kota 1025 dengan gem 5821 dan kotak 132" },
-      { tgl: "5/10/2026 01.01", kota: 1017, gem: 3990, kotak: 0, raw: "saya di kota 1017 dengan gem 3990 dan kotak 0" }
+    let historyData = JSON.parse(localStorage.getItem('ev_history')) || [
+      { id: 1, date: '5/10/2026 01.01', rawDate: '2026-10-05T01:01:00', text: 'saya di kota 1017 dengan gem 3990 dan kotak 0', kota: 1017, gem: 3990, kotak: 0 },
+      { id: 2, date: '5/10/2026 14.54', rawDate: '2026-10-05T14:54:00', text: 'kota 1025 dengan gem 5821 dan kotak 132', kota: 1025, gem: 5821, kotak: 132 },
+      { id: 3, date: '5/10/2026 17.06', rawDate: '2026-10-05T17:06:00', text: 'kota 1027 dengan gem 5450 dan kotak 168', kota: 1027, gem: 5450, kotak: 168 },
+      { id: 4, date: '6/10/2026 02.55', rawDate: '2026-10-06T02:55:00', text: 'aku di kota 1034 dengan gem 2850 dan kotak 303', kota: 1034, gem: 2850, kotak: 303 },
+      { id: 5, date: '6/10/2026 03.37', rawDate: '2026-10-06T03:37:00', text: 'kota 1039 dengan gem 3710 dan kotak 387', kota: 1039, gem: 3710, kotak: 387 },
+      { id: 6, date: '6/10/2026 04.40', rawDate: '2026-10-06T04:40:00', text: 'kota 1043 dengan gem 4360 dan kotak 451', kota: 1043, gem: 4360, kotak: 451 },
+      { id: 7, date: '6/10/2026 16.31', rawDate: '2026-10-06T16:31:00', text: 'saya di kota 1043 dengan kotak 0 dan gem 27600', kota: 1043, gem: 27600, kotak: 0 },
+      { id: 8, date: '7/10/2026 18.45', rawDate: '2026-10-07T18:45:00', text: 'kota 1056 dengam gem 30100 dan kotak 237', kota: 1056, gem: 30100, kotak: 237 }
     ];
 
-    let riwayat = JSON.parse(localStorage.getItem("eatventure_tw_riwayat"));
-    if (!riwayat || riwayat.length === 0) {
-        riwayat = defaultData;
-        localStorage.setItem("eatventure_tw_riwayat", JSON.stringify(riwayat));
+    function simpanStorage() {
+      localStorage.setItem('ev_history', JSON.stringify(historyData));
     }
 
-    // Fungsi tangkap tombol Enter
-    function handleKeyPress(e) {
-      if (e.key === "Enter") {
-        prosesChat();
-      }
-    }
-
-    function prosesChat() {
-      const input = document.getElementById("chatInput").value;
-      if (!input.trim()) return;
-
+    function parseChat(input) {
       const kotaMatch = input.match(/kota\s*(\d+)/i);
       const gemMatch = input.match(/gem[s]?\s*(\d+)/i);
       const kotakMatch = input.match(/kotak\s*(\d+)/i);
 
-      if (!kotaMatch) {
-        alert("Format chat kurang pas! Masukkan minimal angka kota (contoh: kota 1040).");
+      if (!kotaMatch) return null;
+
+      return {
+        kota: parseInt(kotaMatch[1]),
+        gem: gemMatch ? parseInt(gemMatch[1]) : 0,
+        kotak: kotakMatch ? parseInt(kotakMatch[1]) : 0
+      };
+    }
+
+    function tambahProgres() {
+      const inputEl = document.getElementById('chatInput');
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      const parsed = parseChat(text);
+      if (!parsed) {
+        alert('Format pesan tidak dikenali. Contoh: "kota 1056 dengan gem 30100 dan kotak 237"');
         return;
       }
 
       const now = new Date();
-      const tglStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}.${String(now.getMinutes()).padStart(2,'0')}`;
+      const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}.${String(now.getMinutes()).padStart(2,'0')}`;
 
-      const lastData = riwayat[0] || { kota: KOTA_AWAL, gem: 0, kotak: 0 };
-      const newKota = kotaMatch ? parseInt(kotaMatch[1]) : lastData.kota;
-      const newGem = gemMatch ? parseInt(gemMatch[1]) : lastData.gem;
-      const newKotak = kotakMatch ? parseInt(kotakMatch[1]) : lastData.kotak;
+      const newItem = {
+        id: Date.now(),
+        date: dateStr,
+        rawDate: now.toISOString(),
+        text: text,
+        kota: parsed.kota,
+        gem: parsed.gem,
+        kotak: parsed.kotak
+      };
 
-      riwayat.unshift({
-        tgl: tglStr,
-        kota: newKota,
-        gem: newGem,
-        kotak: newKotak,
-        raw: input
-      });
-
-      localStorage.setItem("eatventure_tw_riwayat", JSON.stringify(riwayat));
-      document.getElementById("chatInput").value = "";
-      renderUI();
+      historyData.push(newItem);
+      simpanStorage();
+      inputEl.value = '';
+      updateUI();
     }
 
-    // Fungsi Hapus Pesan Individu
-    function hapusPesan(index) {
-      riwayat.splice(index, 1);
-      localStorage.setItem("eatventure_tw_riwayat", JSON.stringify(riwayat));
-      renderUI();
+    function hapusRiwayat(id) {
+      historyData = historyData.filter(item => item.id !== id);
+      simpanStorage();
+      updateUI();
     }
 
-    function hitungStatusProgres() {
-      // Set target kumulatif langsung ke 18 kota untuk penyesuaian saat ini (mulai dari hutang 18)
-      const targetKumulatif = 18;
-      const totalKotaSaatIni = riwayat.length > 0 ? riwayat[0].kota : KOTA_AWAL;
-      
-      // Mengambil progres kota sejak input terakhir hari ini (1043)
-      const kotaDiselesaikan = totalKotaSaatIni - 1043;
-
-      return kotaDiselesaikan - targetKumulatif;
+    function hapusSemua() {
+      if (confirm('Yakin ingin menghapus seluruh riwayat?')) {
+        historyData = [];
+        simpanStorage();
+        updateUI();
+      }
     }
 
-    function renderUI() {
-      const latest = riwayat[0] || { kota: KOTA_AWAL, gem: 0, kotak: 0 };
+    function hitungSelisihHariInklusif(d1Str, d2Str) {
+      const d1 = new Date(d1Str);
+      const d2 = new Date(d2Str);
 
-      // 1. UPDATE PROGRESS BAR
-      const pctKota = targetData.kota > 0 ? Math.min(100, Math.round((latest.kota / targetData.kota) * 100)) : 0;
-      const pctGems = targetData.gems > 0 ? Math.min(100, Math.round((latest.gem / targetData.gems) * 100)) : 0;
-      const pctKotak = targetData.kotak > 0 ? Math.min(100, Math.round((latest.kotak / targetData.kotak) * 100)) : 0;
+      // Hitung perbedaan tanggal murni tanpa terpengaruh jam
+      const t1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+      const t2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
 
-      document.getElementById("txtProgresKota").innerText = `${latest.kota}/${targetData.kota} (${pctKota}%)`;
-      document.getElementById("barProgresKota").style.width = `${pctKota}%`;
+      const diffMs = t2.getTime() - t1.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-      document.getElementById("txtProgresGems").innerText = `${latest.gem}/${targetData.gems} (${pctGems}%)`;
-      document.getElementById("barProgresGems").style.width = `${pctGems}%`;
+      // Ditambah 1 agar tanggal pertama terhitung inklusif (hari ke-1)
+      return Math.max(1, diffDays + 1);
+    }
 
-      document.getElementById("txtProgresKotak").innerText = `${latest.kotak}/${targetData.kotak} (${pctKotak}%)`;
-      document.getElementById("barProgresKotak").style.width = `${pctKotak}%`;
+    function updateUI() {
+      const targetKota = parseInt(document.getElementById('targetKota').value) || 1300;
+      const targetGems = parseInt(document.getElementById('targetGems').value) || 50000;
+      const targetKotak = parseInt(document.getElementById('targetKotak').value) || 4500;
 
-      // 2. UPDATE CARRY OVER / STATUS
-      const selisih = hitungStatusProgres();
-      const box = document.getElementById("carryOverBox");
-      const title = document.getElementById("statusTitle");
-      const val = document.getElementById("carryOverVal");
-      const badge = document.getElementById("statusBadge");
-      const desc = document.getElementById("statusDesc");
+      const container = document.getElementById('riwayatContainer');
+      container.innerHTML = '';
 
-      box.className = "mt-4 p-4 border rounded-xl text-center space-y-1 transition-all";
-
-      if (selisih < 0) {
-        const hutang = Math.abs(selisih);
-        box.classList.add("bg-red-50", "border-red-200");
-        title.className = "text-xs font-semibold uppercase tracking-wider text-red-700 block";
-        title.innerText = "Akumulasi Hutang Target Kota";
-        val.innerHTML = `${hutang} <span class="text-base font-normal">Kota</span>`;
-        val.className = "text-4xl font-extrabold text-red-600";
-        desc.className = "text-sm font-medium text-red-800 italic pt-2";
-
-        if (hutang > 15) {
-            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white mt-1";
-            badge.innerText = "Rank: Ksatria Tertinggal ⚠️";
-            desc.innerText = "Hutang lumayan menumpuk. Yuk pelan-pelan kejar target harianmu!";
-        } else {
-            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-500 text-white mt-1";
-            badge.innerText = "Rank: Pengejar Target 🏃";
-            desc.innerText = "Sedikit lagi mendekati target. Kamu pasti bisa melunasinya!";
-        }
-      } else {
-        box.classList.add("bg-emerald-50", "border-emerald-200");
-        title.className = "text-xs font-semibold uppercase tracking-wider text-emerald-800 block";
-        title.innerText = "SURPLUS / TABUNGAN KOTA";
-        val.innerHTML = `+${selisih} <span class="text-base font-normal text-emerald-700">Kota 🔥</span>`;
-        val.className = "text-4xl font-extrabold text-emerald-600";
-        desc.className = "text-sm font-medium text-emerald-800 italic pt-2";
-
-        if (selisih === 0) {
-            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white mt-1";
-            badge.innerText = "Rank: Pemain Konsisten 🎯";
-            desc.innerText = "Target terpenuhi pas! Pertahankan ritme permainanmu.";
-        } else if (selisih <= 10) {
-            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-500 text-white mt-1";
-            badge.innerText = "Rank: Pejuang Progres 🚀";
-            desc.innerText = "Luar biasa! Kamu punya tabungan kota jika besok ingin santai.";
-        } else {
-            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-purple-600 text-white mt-1";
-            badge.innerText = "Rank: Master Grind 👑";
-            desc.innerText = "Sangat luar biasa! Progres kamu jauh melampaui target harian.";
-        }
+      if (historyData.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat progres.</p>';
+        document.getElementById('displayHutang').innerHTML = `0 <span class="text-base font-normal text-rose-500">Kota</span>`;
+        return;
       }
 
-      // 3. PENGINGAT HARIAN & ISTIRAHAT
-      document.getElementById("reminderTarget").innerHTML = `Target kamu adalah <b>${TARGET_HARIAN} kota per hari</b>.`;
-      
-      const jamSekarang = new Date().getHours();
-      const restEl = document.getElementById("reminderRest");
-      if (jamSekarang >= 23 || jamSekarang < 5) {
-          restEl.innerText = "🌙 Sudah larut malam/dini hari! Waktunya istirahat & tidur.";
-      } else if (jamSekarang >= 12 && jamSekarang <= 13) {
-          restEl.innerText = "🍱 Waktunya makan siang. Rehat sejenak dari layar hpmu!";
-      } else {
-          restEl.innerText = "☕ Ingat untuk peregangan mata dan badan berkala saat main!";
-      }
+      const sorted = [...historyData].reverse();
 
-      // 4. RENDER RIWAYAT DENGAN TOMBOL HAPUS INDIVIDU
-      const container = document.getElementById("riwayatContainer");
-      container.innerHTML = "";
-
-      riwayat.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-xs hover:bg-slate-100 transition relative group";
-        card.innerHTML = `
-          <div class="flex justify-between items-center font-bold text-slate-500">
-            <span>📅 ${item.tgl}</span>
-            <button onclick="hapusPesan(${index})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded text-[10px] transition" title="Hapus pesan ini">
-              🗑️ Hapus
-            </button>
+      sorted.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1';
+        div.innerHTML = `
+          <div class="flex justify-between text-slate-400 font-semibold mb-1">
+            <span>📅 ${item.date}</span>
+            <button onclick="hapusRiwayat(${item.id})" class="text-rose-500 hover:underline">🗑️ Hapus</button>
           </div>
-          <div class="text-slate-800 font-medium">💬 <i>"${item.raw}"</i></div>
-          <div class="bg-white p-2 rounded border border-slate-100 text-slate-700">
-            🤖 <b>Balasan:</b> Progres diperbarui!<br>
-            <div class="mt-1 flex gap-2 flex-wrap">
-              <span class="bg-slate-100 px-2 py-1 rounded">🏙️ ${item.kota}/${targetData.kota}</span>
-              <span class="bg-slate-100 px-2 py-1 rounded">💎 ${item.gem}/${targetData.gems}</span>
-              <span class="bg-slate-100 px-2 py-1 rounded">📦 ${item.kotak}/${targetData.kotak}</span>
-            </div>
-          </div>
+          <p class="text-slate-700">💬 <i>"${item.text}"</i></p>
+          <p class="text-slate-800 font-medium">🤖 <b>Balasan:</b> Progres diperbarui! 🏙️ ${item.kota}/${targetKota} 💎 ${item.gem}/${targetGems} 📦 ${item.kotak}/${targetKotak}</p>
         `;
-        container.appendChild(card);
+        container.appendChild(div);
       });
+
+      const terlama = historyData[0];
+      const terbaru = historyData[historyData.length - 1];
+
+      const pctKota = Math.min(100, Math.round((terbaru.kota / targetKota) * 100));
+      const pctGems = Math.min(100, Math.round((terbaru.gem / targetGems) * 100));
+      const pctKotak = Math.min(100, Math.round((terbaru.kotak / targetKotak) * 100));
+
+      document.getElementById('textKota').innerText = `${terbaru.kota}/${targetKota} (${pctKota}%)`;
+      document.getElementById('barKota').style.width = `${pctKota}%`;
+
+      document.getElementById('textGems').innerText = `${terbaru.gem}/${targetGems} (${pctGems}%)`;
+      document.getElementById('barGems').style.width = `${pctGems}%`;
+
+      document.getElementById('textKotak').innerText = `${terbaru.kotak}/${targetKotak} (${pctKotak}%)`;
+      document.getElementById('barKotak').style.width = `${pctKotak}%`;
+
+      // Perhitungan Hutang Target Kota
+      const totalHari = hitungSelisihHariInklusif(terlama.rawDate, terbaru.rawDate);
+      const totalTargetKota = totalHari * 22;
+      const totalProgresKota = terbaru.kota - terlama.kota;
+      const hutang = totalTargetKota - totalProgresKota;
+
+      const hutangBersih = Math.max(0, hutang);
+      document.getElementById('displayHutang').innerHTML = `${hutangBersih} <span class="text-base font-normal text-rose-500">Kota</span>`;
     }
 
-    function hapusRiwayat() {
-      if (confirm("Yakin ingin menghapus seluruh riwayat chat? Target dan hutang akan direset kembali ke awal.")) {
-        riwayat = [];
-        localStorage.removeItem("eatventure_tw_riwayat");
-        renderUI();
-      }
-    }
-
-    renderUI();
-    setInterval(renderUI, 60000);
+    updateUI();
   </script>
 </body>
 </html>
-
-```
