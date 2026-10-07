@@ -421,22 +421,22 @@
         displayHutang.className = "text-4xl font-black text-emerald-600";
         displayHutang.innerHTML = `+${tabungan} <span class="text-base font-normal text-emerald-600">Kota</span>`;
 
-        if (tabungan <= 10) {
+        if (tabungan <= 5) {
           rankBadge.className = "inline-block bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
           rankBadge.innerText = "Rank: Penimbun Kota 📦";
-          const sisa = 11 - tabungan;
+          const sisa = 6 - tabungan;
           pesanMotivasi.className = "text-xs text-emerald-700 font-semibold italic mt-1";
           pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Juragan Kota! 👑`;
-        } else if (tabungan <= 25) {
+        } else if (tabungan <= 10) {
           rankBadge.className = "inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
           rankBadge.innerText = "Rank: Juragan Kota 👑";
-          const sisa = 26 - tabungan;
+          const sisa = 11 - tabungan;
           pesanMotivasi.className = "text-xs text-teal-700 font-semibold italic mt-1";
           pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Sultan Kota! 💎`;
-        } else if (tabungan <= 50) {
+        } else if (tabungan <= 20) {
           rankBadge.className = "inline-block bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
           rankBadge.innerText = "Rank: Sultan Kota 💎";
-          const sisa = 51 - tabungan;
+          const sisa = 21 - tabungan;
           pesanMotivasi.className = "text-xs text-cyan-700 font-semibold italic mt-1";
           pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Raja Kota! 🏰`;
         } else {
