@@ -66,14 +66,14 @@
       <p id="statusHariIni" class="text-xs text-emerald-700 font-semibold italic">Semangat! Capai 22 kota hari ini agar hutang tidak bertambah.</p>
     </div>
 
-    <!-- Akumulasi Hutang -->
-    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100 text-center space-y-2">
-      <p class="text-xs font-bold text-rose-500 tracking-wider uppercase">AKUMULASI HUTANG TARGET KOTA</p>
+    <!-- Akumulasi Hutang / Status Rank -->
+    <div id="boxStatusHutang" class="bg-rose-50 p-5 rounded-2xl border border-rose-100 text-center space-y-2 transition-all duration-300">
+      <p id="labelHutang" class="text-xs font-bold text-rose-500 tracking-wider uppercase">AKUMULASI HUTANG TARGET KOTA</p>
       <p id="displayHutang" class="text-4xl font-black text-rose-600">0 <span class="text-base font-normal text-rose-500">Kota</span></p>
       <div>
         <span id="rankBadge" class="inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">Rank: Pengejar Target 🏃</span>
       </div>
-      <p id="pesanMotivasi" class="text-xs text-rose-600 italic mt-1">Sedikit lagi mendekati target. Kamu pasti bisa melunasinya!</p>
+      <p id="pesanMotivasi" class="text-xs text-rose-600 italic mt-1 font-semibold">Sedikit lagi mendekati target!</p>
     </div>
 
     <!-- Rekap & Pengingat & Progress Bars -->
@@ -233,7 +233,6 @@
       const todayMonth = now.getMonth();
       const todayDate = now.getDate();
 
-      // Cari progres terakhir sebelum hari ini sebagai acuan awal hari
       const riwayatSebelumHariIni = sortedHistory.filter(item => {
         const d = new Date(item.rawDate);
         const itemDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -357,14 +356,96 @@
       document.getElementById('textKotak').innerText = `${terbaru.kotak}/${targetKotak} (${pctKotak}%)`;
       document.getElementById('barKotak').style.width = `${pctKotak}%`;
 
-      // Akumulasi Hutang
+      // Akumulasi Hutang / Tabungan
       const totalHari = hitungSelisihHariInklusif(terlama.rawDate, terbaru.rawDate);
       const totalTargetKota = totalHari * 22;
       const totalProgresKota = terbaru.kota - terlama.kota;
       const hutang = totalTargetKota - totalProgresKota;
 
-      const hutangBersih = Math.max(0, hutang);
-      document.getElementById('displayHutang').innerHTML = `${hutangBersih} <span class="text-base font-normal text-rose-500">Kota</span>`;
+      const rankBadge = document.getElementById('rankBadge');
+      const pesanMotivasi = document.getElementById('pesanMotivasi');
+      const displayHutang = document.getElementById('displayHutang');
+      const boxStatusHutang = document.getElementById('boxStatusHutang');
+      const labelHutang = document.getElementById('labelHutang');
+
+      if (hutang > 0) {
+        // TAMPILAN DEFISIT (HUTANG)
+        boxStatusHutang.className = "bg-rose-50 p-5 rounded-2xl border border-rose-200 text-center space-y-2 transition-all duration-300";
+        labelHutang.className = "text-xs font-bold text-rose-500 tracking-wider uppercase";
+        labelHutang.innerText = "AKUMULASI HUTANG TARGET KOTA";
+        displayHutang.className = "text-4xl font-black text-rose-600";
+        displayHutang.innerHTML = `${hutang} <span class="text-base font-normal text-rose-500">Kota</span>`;
+
+        if (hutang > 45) {
+          rankBadge.className = "inline-block bg-rose-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Raja Hutang 💸";
+          const sisa = hutang - 45;
+          pesanMotivasi.className = "text-xs text-rose-700 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Selesaikan ${sisa} kota lagi untuk naik tingkat ke title Buronan Target! ⚠️`;
+        } else if (hutang >= 26) {
+          rankBadge.className = "inline-block bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Buronan Target ⚠️";
+          const sisa = hutang - 25;
+          pesanMotivasi.className = "text-xs text-rose-600 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Penyicil Kota! 🧗`;
+        } else if (hutang >= 11) {
+          rankBadge.className = "inline-block bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Penyicil Kota 🧗";
+          const sisa = hutang - 10;
+          pesanMotivasi.className = "text-xs text-amber-700 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Pengejar Target! 🏃`;
+        } else {
+          rankBadge.className = "inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Pengejar Target 🏃";
+          pesanMotivasi.className = "text-xs text-amber-600 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${hutang} kota lagi untuk melunasi hutang dan meraih title Pemenuh Target! 🎯`;
+        }
+      } else if (hutang === 0) {
+        // TAMPILAN LUNAS (PAS TARGET)
+        boxStatusHutang.className = "bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-2 transition-all duration-300";
+        labelHutang.className = "text-xs font-bold text-emerald-600 tracking-wider uppercase";
+        labelHutang.innerText = "STATUS TARGET KOTA";
+        displayHutang.className = "text-4xl font-black text-emerald-600";
+        displayHutang.innerHTML = `0 <span class="text-base font-normal text-emerald-600">Kota (Lunas)</span>`;
+        
+        rankBadge.className = "inline-block bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+        rankBadge.innerText = "Rank: Pemenuh Target 🎯";
+        pesanMotivasi.className = "text-xs text-emerald-700 font-semibold italic mt-1";
+        pesanMotivasi.innerText = "Hutang lunas! Tinggal 1 kota lagi menuju title Penimbun Kota! 📦";
+      } else {
+        // TAMPILAN SURPLUS (TABUNGAN KOTA)
+        const tabungan = Math.abs(hutang);
+        boxStatusHutang.className = "bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-2 transition-all duration-300";
+        labelHutang.className = "text-xs font-bold text-emerald-600 tracking-wider uppercase";
+        labelHutang.innerText = "TABUNGAN KELEBIHAN KOTA";
+        displayHutang.className = "text-4xl font-black text-emerald-600";
+        displayHutang.innerHTML = `+${tabungan} <span class="text-base font-normal text-emerald-600">Kota</span>`;
+
+        if (tabungan <= 10) {
+          rankBadge.className = "inline-block bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Penimbun Kota 📦";
+          const sisa = 11 - tabungan;
+          pesanMotivasi.className = "text-xs text-emerald-700 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Juragan Kota! 👑`;
+        } else if (tabungan <= 25) {
+          rankBadge.className = "inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Juragan Kota 👑";
+          const sisa = 26 - tabungan;
+          pesanMotivasi.className = "text-xs text-teal-700 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Sultan Kota! 💎`;
+        } else if (tabungan <= 50) {
+          rankBadge.className = "inline-block bg-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Sultan Kota 💎";
+          const sisa = 51 - tabungan;
+          pesanMotivasi.className = "text-xs text-cyan-700 font-semibold italic mt-1";
+          pesanMotivasi.innerText = `Tinggal ${sisa} kota lagi menuju title Raja Kota! 🏰`;
+        } else {
+          rankBadge.className = "inline-block bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm";
+          rankBadge.innerText = "Rank: Raja Kota 🏰";
+          pesanMotivasi.className = "text-xs text-purple-700 font-bold italic mt-1";
+          pesanMotivasi.innerText = "Luar biasa! Kamu telah mencapai takhta tertinggi sebagai Raja Kota! 👑✨";
+        }
+      }
 
       // Update Target Real-time & Grafik
       updateTargetHariIni(terbaru, sortedKronologis);
