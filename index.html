@@ -48,22 +48,22 @@
 
     <!-- Target Harian Real-Time Hari Ini -->
     <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-3">
-      <p class="text-xs font-bold text-emerald-700 tracking-wider uppercase">⚡ TARGET HARIAN HARI INI (22 KOTA/HARI)</p>
+      <p class="text-xs font-bold text-emerald-700 tracking-wider uppercase">⚡ TARGET HARIAN HARI INI (17 KOTA/HARI)</p>
       <div class="flex justify-around items-center">
         <div>
-          <p id="kotaHariIni" class="text-3xl font-black text-emerald-700">0 / 22</p>
+          <p id="kotaHariIni" class="text-3xl font-black text-emerald-700">0 / 17</p>
           <p class="text-xs text-emerald-600 font-medium">Kota Selesai Hari Ini</p>
         </div>
         <div class="h-10 w-px bg-emerald-200"></div>
         <div>
-          <p id="sisaHariIni" class="text-3xl font-black text-emerald-700">22</p>
+          <p id="sisaHariIni" class="text-3xl font-black text-emerald-700">17</p>
           <p class="text-xs text-emerald-600 font-medium">Sisa Target Hari Ini</p>
         </div>
       </div>
       <div class="w-full bg-emerald-200 h-3 rounded-full overflow-hidden">
         <div id="barHariIni" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
       </div>
-      <p id="statusHariIni" class="text-xs text-emerald-700 font-semibold italic">Semangat! Capai 22 kota hari ini agar hutang tidak bertambah.</p>
+      <p id="statusHariIni" class="text-xs text-emerald-700 font-semibold italic">Semangat! Capai 17 kota hari ini agar hutang tidak bertambah.</p>
     </div>
 
     <!-- Akumulasi Hutang / Status Rank -->
@@ -80,7 +80,7 @@
     <div class="bg-blue-50/60 p-5 rounded-2xl border border-blue-100 space-y-4">
       <div class="space-y-1">
         <p class="font-bold text-blue-900 flex items-center gap-2">📢 Rekap & Pengingat</p>
-        <p class="text-xs text-blue-800">Target kamu adalah <span class="font-bold">22 kota per hari</span>. ☕ Ingat untuk peregangan mata dan badan berkala saat main!</p>
+        <p class="text-xs text-blue-800">Target kamu adalah <span class="font-bold">17 kota per hari</span>. ☕ Ingat untuk peregangan mata dan badan berkala saat main!</p>
       </div>
 
       <!-- Progress Bars -->
@@ -246,18 +246,18 @@
       }
 
       const kotaSelesaiHariIni = Math.max(0, terbaru.kota - kotaAwalHariIni);
-      const sisaTarget = Math.max(0, 22 - kotaSelesaiHariIni);
-      const pctHariIni = Math.min(100, Math.round((kotaSelesaiHariIni / 22) * 100));
+      const sisaTarget = Math.max(0, 17 - kotaSelesaiHariIni);
+      const pctHariIni = Math.min(100, Math.round((kotaSelesaiHariIni / 17) * 100));
 
-      document.getElementById('kotaHariIni').innerText = `${kotaSelesaiHariIni} / 22`;
+      document.getElementById('kotaHariIni').innerText = `${kotaSelesaiHariIni} / 17`;
       document.getElementById('sisaHariIni').innerText = `${sisaTarget}`;
       document.getElementById('barHariIni').style.width = `${pctHariIni}%`;
 
       const statusEl = document.getElementById('statusHariIni');
-      if (kotaSelesaiHariIni >= 22) {
-        statusEl.innerText = "🎉 Luar biasa! Target 22 kota hari ini sudah tuntas!";
+      if (kotaSelesaiHariIni >= 17) {
+        statusEl.innerText = "🎉 Luar biasa! Target 17 kota hari ini sudah tuntas!";
       } else {
-        statusEl.innerText = `Kurang ${sisaTarget} kota lagi untuk memenuhi target 22 kota hari ini.`;
+        statusEl.innerText = `Kurang ${sisaTarget} kota lagi untuk memenuhi target 17 kota hari ini.`;
       }
     }
 
@@ -316,8 +316,8 @@
       if (historyData.length === 0) {
         container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Belum ada riwayat progres.</p>';
         document.getElementById('displayHutang').innerHTML = `0 <span class="text-base font-normal text-rose-500">Kota</span>`;
-        document.getElementById('kotaHariIni').innerText = `0 / 22`;
-        document.getElementById('sisaHariIni').innerText = `22`;
+        document.getElementById('kotaHariIni').innerText = `0 / 17`;
+        document.getElementById('sisaHariIni').innerText = `17`;
         document.getElementById('barHariIni').style.width = `0%`;
         if (myChartInstance) myChartInstance.destroy();
         return;
@@ -356,9 +356,9 @@
       document.getElementById('textKotak').innerText = `${terbaru.kotak}/${targetKotak} (${pctKotak}%)`;
       document.getElementById('barKotak').style.width = `${pctKotak}%`;
 
-      // Akumulasi Hutang / Tabungan
+      // Akumulasi Hutang / Tabungan (Target diubah jadi 17)
       const totalHari = hitungSelisihHariInklusif(terlama.rawDate, terbaru.rawDate);
-      const totalTargetKota = totalHari * 22;
+      const totalTargetKota = totalHari * 17;
       const totalProgresKota = terbaru.kota - terlama.kota;
       const hutang = totalTargetKota - totalProgresKota;
 
@@ -369,7 +369,6 @@
       const labelHutang = document.getElementById('labelHutang');
 
       if (hutang > 0) {
-        // TAMPILAN DEFISIT (HUTANG)
         boxStatusHutang.className = "bg-rose-50 p-5 rounded-2xl border border-rose-200 text-center space-y-2 transition-all duration-300";
         labelHutang.className = "text-xs font-bold text-rose-500 tracking-wider uppercase";
         labelHutang.innerText = "AKUMULASI HUTANG TARGET KOTA";
@@ -401,7 +400,6 @@
           pesanMotivasi.innerText = `Tinggal ${hutang} kota lagi untuk melunasi hutang dan meraih title Pemenuh Target! 🎯`;
         }
       } else if (hutang === 0) {
-        // TAMPILAN LUNAS (PAS TARGET)
         boxStatusHutang.className = "bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-2 transition-all duration-300";
         labelHutang.className = "text-xs font-bold text-emerald-600 tracking-wider uppercase";
         labelHutang.innerText = "STATUS TARGET KOTA";
@@ -413,7 +411,6 @@
         pesanMotivasi.className = "text-xs text-emerald-700 font-semibold italic mt-1";
         pesanMotivasi.innerText = "Hutang lunas! Tinggal 1 kota lagi menuju title Penimbun Kota! 📦";
       } else {
-        // TAMPILAN SURPLUS (TABUNGAN KOTA)
         const tabungan = Math.abs(hutang);
         boxStatusHutang.className = "bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-2 transition-all duration-300";
         labelHutang.className = "text-xs font-bold text-emerald-600 tracking-wider uppercase";
@@ -447,7 +444,6 @@
         }
       }
 
-      // Update Target Real-time & Grafik
       updateTargetHariIni(terbaru, sortedKronologis);
       renderGrafik(sortedKronologis);
     }
